@@ -1,5 +1,9 @@
 "use client";
 
+import EmptyBoards from "./empty-boards";
+import EmptyFavorites from "./empty-favorites";
+import EmptySearch from "./empty-search";
+
 interface BoardListProps {
   orgId: string;
   query: {
@@ -12,15 +16,15 @@ export default function BoardList({ orgId, query }: BoardListProps) {
   const data = []; //todo: fetch data
 
   if (!data?.length && query.search) {
-    return <div>No boards found for {query.search}</div>;
+    return <EmptySearch />;
   }
 
   if (!data?.length && query.favorites) {
-    return <div>No favorite boards found</div>;
+    return <EmptyFavorites />;
   }
 
   if (!data?.length) {
-    return <div>No boards found</div>;
+    return <EmptyBoards />;
   }
 
   return <div>{JSON.stringify(query)}</div>;
