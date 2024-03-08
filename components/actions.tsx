@@ -35,6 +35,7 @@ export default function Actions({
   title,
 }: ActionProps) {
   const { onOpen } = useRenameModal();
+
   const { mutate, pending } = useApiMutation(api.board.remove);
 
   const onCopyLink = () => {
@@ -84,7 +85,7 @@ export default function Actions({
           <Pencil className="h-4 w-4 mr-2" />
           Rename
         </DropdownMenuItem>
-      </DropdownMenuContent>{" "}
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }
