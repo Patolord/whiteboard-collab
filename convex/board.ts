@@ -79,7 +79,7 @@ export const update = mutation({
 
 export const favorite = mutation({
   args: {
-    boardId: v.id("boards"),
+    id: v.id("boards"),
     orgId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -87,7 +87,7 @@ export const favorite = mutation({
 
     if (!identity) throw new Error("Unauthorized");
 
-    const board = await ctx.db.get(args.boardId);
+    const board = await ctx.db.get(args.id);
 
     if (!board) throw new Error("Board not found");
 
@@ -104,9 +104,9 @@ export const favorite = mutation({
     }
 
     await ctx.db.insert("userFavorites", {
+      userId,
+      boardId: board._id,
       orgId: args.orgId,
-      userId: userId,
-      boardId: args.boardId,
     });
 
     return board;
@@ -115,14 +115,14 @@ export const favorite = mutation({
 
 export const unfavorite = mutation({
   args: {
-    boardId: v.id("boards"),
+    id: v.id("boards"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) throw new Error("Unauthorized");
 
-    const board = await ctx.db.get(args.boardId);
+    const board = await ctx.db.get(args.id);
 
     if (!board) throw new Error("Board not found");
 
