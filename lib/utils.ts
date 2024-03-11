@@ -1,6 +1,22 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
+}
+
+const COLORS = [
+  "#DC2626",
+  "#FBBF24",
+  "#10B981",
+  "#6366F1",
+  "#8B5CF6",
+  "#EC4899",
+  "#F87171",
+  "#FACC15",
+  "#4ADE80",
+];
+
+export function connectionIdToColor(connectionId: number): string {
+  return COLORS[connectionId % COLORS.length];
 }
