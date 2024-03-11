@@ -14,9 +14,9 @@ export async function POST(request: Request) {
   const authorization = await auth();
   const user = await currentUser();
 
-  if (!authorization || !user) {
+  /*   if (!authorization || !user) {
     return new Response("Forbidden", { status: 403 });
-  }
+  } */
 
   const { room } = await request.json();
   const board = await convex.query(api.board.get, { id: room });
