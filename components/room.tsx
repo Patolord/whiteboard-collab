@@ -20,7 +20,7 @@ export default function Room({ children, roomId, fallback }: RoomProps) {
       initialPresence={{ cursor: null, selection: [] }}
       initialStorage={{
         layers: new LiveMap<string, LiveObject<Layer>>(),
-        layersIds: new LiveList(),
+        layerIds: new LiveList(),
       }}
     >
       <ClientSideSuspense fallback={fallback}>

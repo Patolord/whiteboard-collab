@@ -68,7 +68,7 @@ type Presence = {
 // automatically persisted and synced to all connected clients.
 type Storage = {
   layers: LiveMap<string, LiveObject<Layer>>;
-  layersIds: LiveList<string>;
+  layerIds: LiveList<string>;
   // author: LiveObject<{ firstName: string, lastName: string }>,
   // ...
 };

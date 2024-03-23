@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import {
   Camera,
   CanvasMode,
@@ -8,6 +8,8 @@ import {
   Color,
   LayerType,
   Point,
+  Side,
+  XYWH,
 } from "@/types/canvas";
 
 import { nanoid } from "nanoid";
@@ -35,7 +37,7 @@ interface CanvasProps {
 }
 
 export default function Canvas({ boardId }: CanvasProps) {
-  const layersIds = useStorage((root) => root.layersIds);
+  const layerIds = useStorage((root) => root.layerIds);
   const [canvasState, setCanvasState] = useState<CanvasState>({
     mode: CanvasMode.None,
   });
@@ -64,7 +66,7 @@ export default function Canvas({ boardId }: CanvasProps) {
       if (liveLayers.size >= MAX_LAYERS) {
         return;
       }
-      const liveLayersIds = storage.get("layersIds");
+      const liveLayersIds = storage.get("layerIds");
       const layerId = nanoid();
       const layer = new LiveObject({
         type: layerType,
@@ -81,6 +83,19 @@ export default function Canvas({ boardId }: CanvasProps) {
       setCanvasState({ mode: CanvasMode.None });
     },
     [lastUsedColor]
+  );
+
+  const onResizeHandlePointerDown = useCallback(
+    (corner: Side, initialBounds: XYWH) => {
+      console.log(corner, initialBounds);
+      history.pause();
+      setCanvasState({
+        mode: CanvasMode.Resizing,
+        initialBounds,
+        corner,
+      });
+    },
+    [history]
   );
 
   const onWheel = useCallback((e: React.WheelEvent) => {
@@ -177,7 +192,7 @@ export default function Canvas({ boardId }: CanvasProps) {
         onPointerUp={onPointerUp}
       >
         <g style={{ transform: `translate(${camera.x})px, ${camera.y}px` }}>
-          {layersIds.map((layerId) => (
+          {layerIds.map((layerId) => (
             <LayerPreview
               key={layerId}
               id={layerId}
@@ -185,7 +200,7 @@ export default function Canvas({ boardId }: CanvasProps) {
               selectionColor={layerIdsToColorSelection[layerId]}
             />
           ))}
-          <SelectionBox onResizeHandlePointerDown={() => {}} />
+          <SelectionBox onResizeHandlePointerDown={onResizeHandlePointerDown} />
           <CursorPresence />
         </g>
       </svg>

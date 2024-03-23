@@ -1,7 +1,16 @@
-import { useStorage } from "@/liveblocks.config";
-import { LayerType } from "@/types/canvas";
+"use client";
+
 import { memo } from "react";
-import Rectangle from "./rectangle";
+
+import { colorToCss } from "@/lib/utils";
+import { LayerType } from "@/types/canvas";
+import { useStorage } from "@/liveblocks.config";
+
+//import { Text } from "./text";
+//import { Ellipse } from "./ellipse";
+import { Rectangle } from "./rectangle";
+//import { Note } from "./note";
+//import { Path } from "./path";
 
 interface LayerPreviewProps {
   id: string;
@@ -9,30 +18,29 @@ interface LayerPreviewProps {
   selectionColor?: string;
 }
 
-export const LayerPreview = memo(function LayerPreview({
-  id,
-  onLayerPointerDown,
-  selectionColor,
-}: LayerPreviewProps) {
-  const layer = useStorage((root) => root.layers.get(id));
+export const LayerPreview = memo(
+  ({ id, onLayerPointerDown, selectionColor }: LayerPreviewProps) => {
+    const layer = useStorage((root) => root.layers.get(id));
 
-  if (!layer) {
-    return null;
-  }
-  switch (layer.type) {
-    case LayerType.Rectangle:
-      return (
-        <Rectangle
-          id={id}
-          layer={layer}
-          onPointerDown={onLayerPointerDown}
-          selectionColor={selectionColor}
-        />
-      );
-    default:
-      console.warn("Unknown layer type");
+    if (!layer) {
       return null;
+    }
+    switch (layer.type) {
+      case LayerType.Rectangle:
+        return (
+          <Rectangle
+            id={id}
+            layer={layer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
+
+      default:
+        console.warn("Unknown layer type");
+        return null;
+    }
   }
-});
+);
 
 LayerPreview.displayName = "LayerPreview";
