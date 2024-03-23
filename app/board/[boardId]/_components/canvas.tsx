@@ -29,6 +29,7 @@ import { CursorPresence } from "./cursors-presence";
 import { connectionIdToColor, pointerEventToCanvasPoint } from "@/lib/utils";
 import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
+import { SelectionBox } from "./selection-box";
 interface CanvasProps {
   boardId: string;
 }
@@ -121,15 +122,24 @@ export default function Canvas({ boardId }: CanvasProps) {
   const selections = useOthersMapped((other) => other.presence.selection);
 
   const onLayerPointerDown = useMutation(
-    ({ self, setMyPresence }, e: React.PointerEvent, layerId: String) => {
+    ({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
       if (
         canvasState.mode === CanvasMode.Pencil ||
         canvasState.mode === CanvasMode.Inserting
       ) {
         return;
       }
+      history.pause();
+      e.stopPropagation();
+
+      const point = pointerEventToCanvasPoint(e, camera);
+
+      if (!self.presence.selection.includes(layerId)) {
+        setMyPresence({ selection: [layerId] }, { addToHistory: true });
+      }
+      setCanvasState({ mode: CanvasMode.Translating, current: point });
     },
-    []
+    [setCanvasState, history, camera, canvasState.mode]
   );
 
   const layerIdsToColorSelection = useMemo(() => {
@@ -171,10 +181,11 @@ export default function Canvas({ boardId }: CanvasProps) {
             <LayerPreview
               key={layerId}
               id={layerId}
-              onLayerPointerDown={() => {}}
+              onLayerPointerDown={onLayerPointerDown}
               selectionColor={layerIdsToColorSelection[layerId]}
             />
           ))}
+          <SelectionBox onResizeHandlePointerDown={() => {}} />
           <CursorPresence />
         </g>
       </svg>
